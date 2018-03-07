@@ -68,7 +68,7 @@ try:
           lendata = connection.recv(2)
           if lendata:  
             lendata = int(lendata)
-            data = connection.recv(32)
+            data = connection.recv(lendata+1)
             if data:
               data = data[:lendata] 
               input_handler(ctldata, data)
