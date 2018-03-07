@@ -16,7 +16,7 @@ lcd = LCD.find_or_die()
 
 def input_handler(ctl_data, str_data):
   global line_0, line_1, line_2, line_3, lcd
-  if ctl_data == 0:
+  if ctl_data == "0":
     line_0 = str_data
   elif ctl_data == "1":
     line_1 = str_data
