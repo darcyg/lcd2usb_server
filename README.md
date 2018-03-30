@@ -14,4 +14,4 @@ Depends on the lcd2usb python2 module
     
 **-e**
 
-    Allow external or connections.
+    Allow external connections.
