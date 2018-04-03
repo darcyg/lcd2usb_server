@@ -11,7 +11,7 @@ noDisplay = False  #"-n"
 verbose = False  #"-v"
 allowExternal = False #"-e"
 
-# Original Line Variables
+# Default Line Variables
 line0_default = "%I:%M%p"
 line1_default = " "
 line2_default = "Waiting for"
@@ -24,41 +24,44 @@ server_address = ('localhost', portNum)
 class lcd_thread(threading.Thread):
   def __init__(self):
     threading.Thread.__init__(self)
-    lcd = LCD.find_or_die()
-    line0 = line0_default
-    line1 = line1_default
-    line2 = line2_default
-    line3 = line3_default
+    self.lcd = LCD.find_or_die()
+    self.refresh_interval = 2
+    self.line0 = line0_default
+    self.line1 = line1_default
+    self.line2 = line2_default
+    self.line3 = line3_default
   def run(self):
     self.lcd_refresh_loop()
   def lcd_refresh(self):
     import datetime
     dt = datetime.datetime.now()
-    lcd.home()
-    lcd.fill_center(dt.strftime(line_0),0)
-    lcd.fill_center(dt.strftime(line_1),1)
-    lcd.fill_center(dt.strftime(line_2),2)
-    lcd.fill_center(dt.strftime(line_3),3)
+    self.lcd.home()
+    self.lcd.fill_center(dt.strftime(self.line0),0)
+    self.lcd.fill_center(dt.strftime(self.line1),1)
+    self.lcd.fill_center(dt.strftime(self.line2),2)
+    self.lcd.fill_center(dt.strftime(self.line3),3)
   def lcd_refresh_loop(self):
     while True:
-      lcd_refresh()
-      time.sleep(2)   
-  def set_line0(new_string):
-    line0 = new_string
-    lcd_refresh()
-  def set_line1(new_string):
-    line1 = new_string
-    lcd_refresh()
-  def set_line2(new_string):
-    line2 = new_string
-    lcd_refresh()
-  def set_line3(new_string):
-    line3 = new_string
-    lcd_refresh()
-  def set_brightness(brightness):
-    lcd.set_brightness(brightness)
+      self.lcd_refresh()
+      time.sleep(self.refresh_interval)   
+  def set_line0(self, new_string):
+    self.line0 = new_string
+    self.lcd_refresh()
+  def set_line1(self, new_string):
+    self.line1 = new_string
+    self.lcd_refresh()
+  def set_line2(self, new_string):
+    self.line2 = new_string
+    self.lcd_refresh()
+  def set_line3(self, new_string):
+    self.line3 = new_string
+    self.lcd_refresh()
+  def set_brightness(self, brightness):
+    self.lcd.set_brightness(brightness)
+  def set_refresh_interval(self, new_interval):
+    self.refresh_interval = new_interval
 
-def input_handler(ctl_data, str_data):
+def input_handler(ctl_data, str_data, lcd_thread):
   global line_0, line_1, line_2, line_3, lcd
   if ctl_data == "0":
     if (verbose):
@@ -133,7 +136,7 @@ if (__name__ == "__main__"):
               data = connection.recv(lendata+1)
               if data:
                 data = data[:lendata] 
-                input_handler(ctldata, data)
+                input_handler(ctldata, data,lcd_update)
               else:
                 break
             else:
